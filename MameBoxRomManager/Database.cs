@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.SQLite;
 using System.IO;
+using System.Data;
+using System.Collections.ObjectModel;
 
 namespace MameBoxRomManager
 {
@@ -34,6 +36,7 @@ namespace MameBoxRomManager
             }
         }
 
+        //Initializind db for first use
         private void initDatabase()
         {
             this.executeQuery("CREATE TABLE `games` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `zipName` TEXT, `gameName` TEXT, `inMamebox` INTEGER);");
@@ -44,6 +47,7 @@ namespace MameBoxRomManager
             this.executeQuery("INSERT INTO settings(key, value) VALUES('xmlFileDir', '')");
         }
 
+        //Execute a sql query
         public bool executeQuery(string sql)
         {
             int returnVal;
@@ -61,6 +65,7 @@ namespace MameBoxRomManager
             }
         }
 
+        //Return setting value
         public string getSetting(string key)
         {
             string returnValue = "";
@@ -75,11 +80,13 @@ namespace MameBoxRomManager
             return returnValue;
         }
 
+        //Setting a setting lol
         public bool setSetting(string key, string value)
         {
             return this.executeQuery("UPDATE settings SET value = '"+value+"' WHERE key = '"+key+"'");
         }
 
+        //Add game in DB
         public void addGame(string zipName, string gameName)
         {
             SQLiteCommand cmd = new SQLiteCommand("INSERT INTO games(zipName, gameName,inMamebox) VALUES(@zipName, @gameName, 0)", this.dbConn);
@@ -92,9 +99,33 @@ namespace MameBoxRomManager
 
         }
 
+        //Update a game status in db
         public void updateGameEntry(string zipFile, int isPresent)
         {
             this.executeQuery("UPDATE games SET inMamebox = 1 WHERE zipName = '"+zipFile+"'");
+        }
+
+        //Create a list with all games from db
+        public ObservableCollection<Game> fillGameList()
+        {
+            ObservableCollection<Game> gameList = new ObservableCollection<Game>();
+            bool inMameBox;
+            this.dbConn.Open();
+            SQLiteCommand cmd = new SQLiteCommand("SELECT * FROM games", this.dbConn);
+            SQLiteDataReader rdr = cmd.ExecuteReader();
+            while(rdr.Read()){
+                if(rdr["inMamebox"].ToString() == "1")
+                {
+                    inMameBox = true;
+                }
+                else
+                {
+                    inMameBox = false;
+                }
+                gameList.Add(new Game(rdr["zipName"].ToString(), rdr["gameName"].ToString(),inMameBox));
+            }
+            this.dbConn.Close();
+            return gameList;
         }
 
 

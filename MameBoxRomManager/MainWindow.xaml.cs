@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -28,11 +29,15 @@ namespace MameBoxRomManager
     {
 
         private Database db;
+        public ObservableCollection<Game> Games { get; set; }
 
         public MainWindow()
         {
             InitializeComponent();
             db = new Database();
+            this.DataContext = this;
+            Games = new ObservableCollection<Game>();
+            Games = db.fillGameList();
             this.tb_fullsetDirectory.Text = db.getSetting("fullsetDir");
             this.tb_mameboxDir.Text = db.getSetting("mameboxDir");
             this.tb_listXMLFile.Text = db.getSetting("xmlFileDir");
@@ -131,6 +136,7 @@ namespace MameBoxRomManager
             thread.Start();
         }
 
+        //Building XML DB
         private void buildDB(string xmlDir, string fullSetDir)
         {
             string zipName;
@@ -164,6 +170,7 @@ namespace MameBoxRomManager
             });
         }
 
+        //Button handler for syncing with mamebox
         private void btn_updateArcadeBox_Click(object sender, RoutedEventArgs e)
         {
             string mameBoxDir = tb_mameboxDir.Text;
@@ -172,6 +179,7 @@ namespace MameBoxRomManager
             thread.Start();
         }
 
+        //Building mamebox list
         private void buildDBWithMameBox(string arcadeBoxDir)
         {
             string[] fileEntries = Directory.GetFiles(arcadeBoxDir);
@@ -195,15 +203,17 @@ namespace MameBoxRomManager
 
         }
 
+        //Disable buttons
         private void disableButton()
         {
             btn_buildDB.IsEnabled = false;
             btn_updateArcadeBox.IsEnabled = false;
         }
 
-        private void enableButton()
+        private void tb_Search_KeyUp(object sender, KeyEventArgs e)
         {
-            
+            var filtered = Games.Where(Game => Game.GameName.StartsWith(tb_Search.Text));
+            dg_main.ItemsSource = filtered;
         }
     }
 }
