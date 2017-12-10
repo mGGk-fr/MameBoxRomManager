@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -13,6 +15,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
+using System.Xml;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
 namespace MameBoxRomManager
@@ -22,9 +26,16 @@ namespace MameBoxRomManager
     /// </summary>
     public partial class MainWindow : Window
     {
+
+        private Database db;
+
         public MainWindow()
         {
             InitializeComponent();
+            db = new Database();
+            this.tb_fullsetDirectory.Text = db.getSetting("fullsetDir");
+            this.tb_mameboxDir.Text = db.getSetting("mameboxDir");
+            this.tb_listXMLFile.Text = db.getSetting("xmlFileDir");
         }
 
         //Utilities functions
@@ -82,17 +93,117 @@ namespace MameBoxRomManager
             return returnFolder;
         }
 
+        private void parseXMLFile(string xmlDirectory)
+        {
+
+        }
+
         //UI Functions
         //Select fullset directory
         private void btn_browseFullset_Click(object sender, RoutedEventArgs e)
         {
             tb_fullsetDirectory.Text = openFolderBrowser();
+            this.db.setSetting("fullsetDir", tb_fullsetDirectory.Text);
         }
 
         //Select mamebox directory
         private void btn_browseMameBox_Click(object sender, RoutedEventArgs e)
         {
             tb_mameboxDir.Text = openFolderBrowser();
+            this.db.setSetting("mameboxDir", tb_mameboxDir.Text);
+        }
+
+        //Select XML File
+        private void btn_browselistXML_Click(object sender, RoutedEventArgs e)
+        {
+            tb_listXMLFile.Text = openFileBrowser();
+            this.db.setSetting("xmlFileDir", tb_listXMLFile.Text);
+        }
+
+        //Building database from XML
+        private void btn_buildDB_Click(object sender, RoutedEventArgs e)
+        {
+            string fileName = tb_listXMLFile.Text;
+            string fullsetDir = tb_fullsetDirectory.Text;
+            MessageBox.Show("Building database is quiet long, click ok and wait for the bar to be full");
+            disableButton();
+            Thread thread = new Thread(() => buildDB(fileName, fullsetDir));
+            thread.Start();
+        }
+
+        private void buildDB(string xmlDir, string fullSetDir)
+        {
+            string zipName;
+            string gameName;
+            XmlDocument doc = new XmlDocument();
+            if (!File.Exists(xmlDir))
+            {
+                MessageBox.Show("XML File does not exists", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+            db.executeQuery("DELETE FROM games");
+            doc.Load(xmlDir);
+            XmlNodeList elemList = doc.GetElementsByTagName("machine");
+            foreach (XmlNode node in elemList)
+            {
+                zipName = node.Attributes["name"].InnerText;
+                gameName = node["description"].InnerText;
+                if (File.Exists(fullSetDir + "\\" + zipName + ".zip"))
+                {
+                    db.addGame(zipName, gameName);
+                }
+                this.Dispatcher.Invoke(() => {
+                    pg_tool.Maximum = elemList.Count;
+                    pg_tool.Value+=1;
+                });
+            }
+            MessageBox.Show("Build success");
+            this.Dispatcher.Invoke(() => {
+                btn_buildDB.IsEnabled = true;
+                btn_updateArcadeBox.IsEnabled = true;
+            });
+        }
+
+        private void btn_updateArcadeBox_Click(object sender, RoutedEventArgs e)
+        {
+            string mameBoxDir = tb_mameboxDir.Text;
+            disableButton();
+            Thread thread = new Thread(() => buildDBWithMameBox(mameBoxDir));
+            thread.Start();
+        }
+
+        private void buildDBWithMameBox(string arcadeBoxDir)
+        {
+            string[] fileEntries = Directory.GetFiles(arcadeBoxDir);
+            string zipFile = "";
+            int fileCount = Directory.GetFiles(arcadeBoxDir, "*.zip", SearchOption.TopDirectoryOnly).Length;
+            db.executeQuery("UPDATE games SET inMamebox = 0");
+            foreach (string fileName in fileEntries)
+            {
+                zipFile = System.IO.Path.GetFileNameWithoutExtension(fileName);
+                db.updateGameEntry(zipFile, 1);
+                this.Dispatcher.Invoke(() => {
+                    pg_tool.Maximum = fileCount;
+                    pg_tool.Value += 1;
+                });
+            }
+            MessageBox.Show("Completed");
+            this.Dispatcher.Invoke(() => {
+                btn_buildDB.IsEnabled = true;
+                btn_updateArcadeBox.IsEnabled = true;
+            });
+
+        }
+
+        private void disableButton()
+        {
+            btn_buildDB.IsEnabled = false;
+            btn_updateArcadeBox.IsEnabled = false;
+        }
+
+        private void enableButton()
+        {
+            
         }
     }
 }

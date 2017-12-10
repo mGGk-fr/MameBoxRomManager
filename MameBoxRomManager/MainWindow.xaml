@@ -10,7 +10,7 @@
         <TabControl>
             <TabItem Header="Game List">
                 <Grid Background="#FFE5E5E5">
-                    <DataGrid HorizontalAlignment="Left" Margin="10,40,0,10" Width="415"/>
+                    <DataGrid Margin="10"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Settings">
@@ -21,9 +21,12 @@
                     <TextBox x:Name="tb_mameboxDir" Height="23" Margin="155,45,81,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
                     <Label Content="List XML :" HorizontalAlignment="Left" Margin="10,72,0,0" VerticalAlignment="Top" Width="140"/>
                     <TextBox x:Name="tb_listXMLFile" Height="23" Margin="155,76,81,0" TextWrapping="Wrap" VerticalAlignment="Top"/>
-                    <Button x:Name="btn_browseFullset" Content="Browse" Margin="711,14,10,0" VerticalAlignment="Top" Height="23" Click="btn_browseFullset_Click"/>
-                    <Button x:Name="btn_browseMameBox" Content="Browse" Margin="711,45,10,0" VerticalAlignment="Top" Height="23" Click="btn_browseMameBox_Click"/>
-                    <Button x:Name="btn_browselistXML" Content="Browse" Margin="711,76,10,0" VerticalAlignment="Top" Height="23"/>
+                    <Button x:Name="btn_browseFullset" Content="Browse" Margin="0,14,10,0" VerticalAlignment="Top" Height="23" Click="btn_browseFullset_Click" HorizontalAlignment="Right" Width="65"/>
+                    <Button x:Name="btn_browseMameBox" Content="Browse" Margin="0,45,10,0" VerticalAlignment="Top" Height="23" Click="btn_browseMameBox_Click" HorizontalAlignment="Right" Width="65"/>
+                    <Button x:Name="btn_browselistXML" Content="Browse" Margin="0,76,10,0" VerticalAlignment="Top" Height="23" Click="btn_browselistXML_Click" HorizontalAlignment="Right" Width="65"/>
+                    <Button x:Name="btn_buildDB" Content="Build/Rebuild Database" HorizontalAlignment="Left" Margin="10,150,0,0" VerticalAlignment="Top" Width="140" Click="btn_buildDB_Click"/>
+                    <ProgressBar x:Name="pg_tool" Height="42" Margin="10,103,10,0" VerticalAlignment="Top"/>
+                    <Button x:Name="btn_updateArcadeBox" Content="Sync DB with MameBox" HorizontalAlignment="Left" Margin="155,150,0,0" VerticalAlignment="Top" Width="140" Click="btn_updateArcadeBox_Click"/>
                 </Grid>
             </TabItem>
             <TabItem Header="About" >
