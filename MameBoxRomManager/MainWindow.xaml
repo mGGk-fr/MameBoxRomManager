@@ -18,9 +18,10 @@
                         </DataGrid.Columns>
                     </DataGrid>
                     <Label Content="Search" HorizontalAlignment="Left" Margin="0,9,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="tb_Search" HorizontalAlignment="Left" Height="23" Margin="50,12,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="475" KeyUp="tb_Search_KeyUp"/>
-                    <Button x:Name="btn_Save" Content="Save" HorizontalAlignment="Left" Margin="0,0,0,10" Width="260" Height="34" VerticalAlignment="Bottom"/>
-                    <Button x:Name="btn_SaveAndSync" Content="Save &amp; Synchronize MameBox" HorizontalAlignment="Left" Margin="265,0,0,10" Width="260" Height="34" VerticalAlignment="Bottom"/>
+                    <TextBox x:Name="tb_Search" Height="23" Margin="50,12,248,0" TextWrapping="Wrap" VerticalAlignment="Top" KeyUp="tb_Search_KeyUp"/>
+                    <Button x:Name="btn_Save" Content="Save" Margin="10,0,516,7" Height="34" VerticalAlignment="Bottom" Click="btn_Save_Click"/>
+                    <Button x:Name="btn_SaveAndSync" Content="Save &amp; Synchronize MameBox" Margin="278,0,248,7" Height="34" VerticalAlignment="Bottom"/>
+                    <ProgressBar x:Name="pg_main" Height="23" Margin="0,12,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="233"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Settings">

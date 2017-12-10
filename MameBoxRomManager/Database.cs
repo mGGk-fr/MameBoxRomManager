@@ -102,7 +102,7 @@ namespace MameBoxRomManager
         //Update a game status in db
         public void updateGameEntry(string zipFile, int isPresent)
         {
-            this.executeQuery("UPDATE games SET inMamebox = 1 WHERE zipName = '"+zipFile+"'");
+            this.executeQuery("UPDATE games SET inMamebox = '"+isPresent.ToString()+"' WHERE zipName = '"+zipFile+"'");
         }
 
         //Create a list with all games from db

@@ -41,6 +41,7 @@ namespace MameBoxRomManager
             this.tb_fullsetDirectory.Text = db.getSetting("fullsetDir");
             this.tb_mameboxDir.Text = db.getSetting("mameboxDir");
             this.tb_listXMLFile.Text = db.getSetting("xmlFileDir");
+            pg_main.Maximum = Games.Count;
         }
 
         //Utilities functions
@@ -163,10 +164,12 @@ namespace MameBoxRomManager
                     pg_tool.Value+=1;
                 });
             }
-            MessageBox.Show("Build success");
+            MessageBox.Show("Build success ! Please restart the application !");
             this.Dispatcher.Invoke(() => {
                 btn_buildDB.IsEnabled = true;
                 btn_updateArcadeBox.IsEnabled = true;
+                btn_Save.IsEnabled = true;
+                btn_SaveAndSync.IsEnabled = true;
             });
         }
 
@@ -195,10 +198,12 @@ namespace MameBoxRomManager
                     pg_tool.Value += 1;
                 });
             }
-            MessageBox.Show("Completed");
+            MessageBox.Show("Completed, please restart the application.");
             this.Dispatcher.Invoke(() => {
                 btn_buildDB.IsEnabled = true;
                 btn_updateArcadeBox.IsEnabled = true;
+                btn_Save.IsEnabled = true;
+                btn_SaveAndSync.IsEnabled = true;
             });
 
         }
@@ -208,12 +213,50 @@ namespace MameBoxRomManager
         {
             btn_buildDB.IsEnabled = false;
             btn_updateArcadeBox.IsEnabled = false;
+            btn_Save.IsEnabled = false;
+            btn_SaveAndSync.IsEnabled = false;
         }
 
         private void tb_Search_KeyUp(object sender, KeyEventArgs e)
         {
             var filtered = Games.Where(Game => Game.GameName.StartsWith(tb_Search.Text));
             dg_main.ItemsSource = filtered;
+        }
+
+        private void btn_Save_Click(object sender, RoutedEventArgs e)
+        {
+            disableButton();
+            Thread thread = new Thread(() => saveDB());
+            thread.Start();
+        }
+
+        public void saveDB()
+        {
+            int enabled;
+            foreach (Game game in Games)
+            {
+                if (game.InMameBox)
+                {
+                    enabled = 1;
+                }
+                else
+                {
+                    enabled = 0;
+                }
+
+                this.db.updateGameEntry(game.ZipFile, enabled);
+
+                this.Dispatcher.Invoke(() => {
+                    pg_main.Value += 1;
+                });
+            }
+            MessageBox.Show("Successfully Saved");
+            this.Dispatcher.Invoke(() => {
+                btn_buildDB.IsEnabled = true;
+                btn_updateArcadeBox.IsEnabled = true;
+                btn_Save.IsEnabled = true;
+                btn_SaveAndSync.IsEnabled = true;
+            });
         }
     }
 }
