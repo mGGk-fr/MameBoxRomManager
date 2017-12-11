@@ -42,7 +42,9 @@ namespace MameBoxRomManager
             this.tb_mameboxDir.Text = db.getSetting("mameboxDir");
             this.tb_listXMLFile.Text = db.getSetting("xmlFileDir");
             pg_main.Maximum = Games.Count;
-            
+            pg_main.Value = 0;
+
+
         }
 
         //Utilities functions
