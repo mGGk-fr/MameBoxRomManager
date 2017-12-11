@@ -10,17 +10,22 @@
         <TabControl>
             <TabItem Header="Game List">
                 <Grid Background="#FFE5E5E5">
-                    <DataGrid x:Name="dg_main" ItemsSource="{Binding Games}" AutoGenerateColumns="False" Margin="0,41,248,49">
+                    <DataGrid x:Name="dg_main" ItemsSource="{Binding Games}" AutoGenerateColumns="False" Margin="0,41,248,49" Loaded="dg_main_Loaded">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="ZipFile" Binding="{Binding ZipFile}" IsReadOnly="True" />
                             <DataGridTextColumn Header="Game Name" Binding="{Binding GameName}" IsReadOnly="True"/>
-                            <DataGridCheckBoxColumn Header="In MAME Box" Binding="{Binding InMameBox}"/>
+                            <DataGridTemplateColumn Header="In Mamebox">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding InMameBox, UpdateSourceTrigger=PropertyChanged}" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
                         </DataGrid.Columns>
                     </DataGrid>
                     <Label Content="Search" HorizontalAlignment="Left" Margin="0,9,0,0" VerticalAlignment="Top"/>
                     <TextBox x:Name="tb_Search" Height="23" Margin="50,12,248,0" TextWrapping="Wrap" VerticalAlignment="Top" KeyUp="tb_Search_KeyUp"/>
-                    <Button x:Name="btn_Save" Content="Save" Margin="10,0,516,7" Height="34" VerticalAlignment="Bottom" Click="btn_Save_Click"/>
-                    <Button x:Name="btn_SaveAndSync" Content="Save &amp; Synchronize MameBox" Margin="278,0,248,7" Height="34" VerticalAlignment="Bottom"/>
+                    <Button x:Name="btn_SaveAndSync" Content="Synchronize MameBox" Margin="0,0,248,7" Height="34" VerticalAlignment="Bottom" Click="btn_SaveAndSync_Click"/>
                     <ProgressBar x:Name="pg_main" Height="23" Margin="0,12,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="233"/>
                 </Grid>
             </TabItem>

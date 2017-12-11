@@ -3,8 +3,11 @@ Welcome to the MameBoxRomManager repository.
 
 This little tool has been design to simply manage roms on a MAME Arcade System.
 
+As I start WPF programming, the code is quiet dirty and unoptimized, feel free to improve it !
+
 ## Support me
 You can donate any amount you want to let me buy some beer here :
+
 [![Donation](https://www.paypalobjects.com/webstatic/en_US/i/buttons/PP_logo_h_200x51.png)](https://www.paypal.me/mggk)
 
 ## Genesis
