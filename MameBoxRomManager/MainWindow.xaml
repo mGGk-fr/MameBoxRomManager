@@ -27,6 +27,7 @@
                     <TextBox x:Name="tb_Search" Height="23" Margin="50,12,248,0" TextWrapping="Wrap" VerticalAlignment="Top" KeyUp="tb_Search_KeyUp"/>
                     <Button x:Name="btn_SaveAndSync" Content="Synchronize MameBox" Margin="0,0,248,7" Height="34" VerticalAlignment="Bottom" Click="btn_SaveAndSync_Click"/>
                     <ProgressBar x:Name="pg_main" Height="23" Margin="0,12,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="233"/>
+                    <CheckBox x:Name="cbFullSync" Content="Do a full resync" Margin="0,506,10,0" RenderTransformOrigin="-0.141,0.533" Height="15" VerticalAlignment="Top" HorizontalAlignment="Right" Width="233"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Settings">

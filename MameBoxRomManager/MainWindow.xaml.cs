@@ -76,7 +76,7 @@ namespace MameBoxRomManager
         }
 
         //Open the file browser
-        private string openFileBrowser(string titleBar = "Please select a folder", string defaultFolder = @"C:\")
+        private string openFileBrowser(string titleBar = "Please select a file", string defaultFolder = @"C:\")
         {
             string returnFolder = "";
             var dlg = new CommonOpenFileDialog();
@@ -277,13 +277,14 @@ namespace MameBoxRomManager
 
         private void syncMamebox(string fullsetDir, string mameboxDir)
         {
+            bool fullSync = cbFullSync.IsChecked.Value;
             foreach (Game cg in Games)
             {
                 if (cg.InMameBox)
                 {
-                    if (!File.Exists(mameboxDir + "\\"+cg.ZipFile+".zip"))
+                    if (!File.Exists(mameboxDir + "\\"+cg.ZipFile+".zip") || fullSync)
                     {
-                        File.Copy(fullsetDir + "\\" + cg.ZipFile + ".zip", mameboxDir + "\\" + cg.ZipFile + ".zip");
+                        File.Copy(fullsetDir + "\\" + cg.ZipFile + ".zip", mameboxDir + "\\" + cg.ZipFile + ".zip", true);
                     }
                 }
                 else
