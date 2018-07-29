@@ -37,14 +37,12 @@ namespace MameBoxRomManager
             db = new Database();
             this.DataContext = this;
             Games = new ObservableCollection<Game>();
-            Games = db.fillGameList();
+            reloadDatabase();
             this.tb_fullsetDirectory.Text = db.getSetting("fullsetDir");
             this.tb_mameboxDir.Text = db.getSetting("mameboxDir");
             this.tb_listXMLFile.Text = db.getSetting("xmlFileDir");
             pg_main.Maximum = Games.Count;
             pg_main.Value = 0;
-
-
         }
 
         //Utilities functions
@@ -102,11 +100,12 @@ namespace MameBoxRomManager
             return returnFolder;
         }
 
-        private void parseXMLFile(string xmlDirectory)
+        //Reloading databases infos
+        private void reloadDatabase()
         {
-
+            Games = db.fillGameList();
+            
         }
-
         //UI Functions
         //Select fullset directory
         private void btn_browseFullset_Click(object sender, RoutedEventArgs e)
@@ -128,7 +127,6 @@ namespace MameBoxRomManager
             tb_listXMLFile.Text = openFileBrowser();
             this.db.setSetting("xmlFileDir", tb_listXMLFile.Text);
         }
-
         //Building database from XML
         private void btn_buildDB_Click(object sender, RoutedEventArgs e)
         {
@@ -167,11 +165,14 @@ namespace MameBoxRomManager
                     pg_tool.Value+=1;
                 });
             }
-            MessageBox.Show("Build success ! Please restart the application !");
+            reloadDatabase();
+            MessageBox.Show("Build success !");
             this.Dispatcher.Invoke(() => {
                 btn_buildDB.IsEnabled = true;
                 btn_updateArcadeBox.IsEnabled = true;
                 btn_SaveAndSync.IsEnabled = true;
+                dg_main.ItemsSource = Games;
+                dg_main.Items.Refresh();
             });
         }
 
@@ -200,11 +201,15 @@ namespace MameBoxRomManager
                     pg_tool.Value += 1;
                 });
             }
-            MessageBox.Show("Completed, please restart the application.");
+            reloadDatabase();
+            
+            MessageBox.Show("Completed");
             this.Dispatcher.Invoke(() => {
                 btn_buildDB.IsEnabled = true;
                 btn_updateArcadeBox.IsEnabled = true;
                 btn_SaveAndSync.IsEnabled = true;
+                dg_main.ItemsSource = Games;
+                dg_main.Items.Refresh();
             });
 
         }
@@ -269,15 +274,15 @@ namespace MameBoxRomManager
             disableButton();
             string fsd = tb_fullsetDirectory.Text;
             string mbdir = tb_mameboxDir.Text;
+            bool fullSync = cbFullSync.IsChecked.Value;
             pg_main.Value = 0;
-            Thread thread = new Thread(() => syncMamebox(fsd, mbdir));
+            Thread thread = new Thread(() => syncMamebox(fsd, mbdir, fullSync));
             thread.Start();
 
         }
 
-        private void syncMamebox(string fullsetDir, string mameboxDir)
+        private void syncMamebox(string fullsetDir, string mameboxDir, bool fullSync = false)
         {
-            bool fullSync = cbFullSync.IsChecked.Value;
             foreach (Game cg in Games)
             {
                 if (cg.InMameBox)
