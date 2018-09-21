@@ -19,6 +19,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Xml;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using Path = System.IO.Path;
 
 namespace MameBoxRomManager
 {
@@ -71,6 +72,27 @@ namespace MameBoxRomManager
                 return folder;
             }
             return returnFolder;
+        }
+
+        //Function to copy whole folder
+        static public void CopyDir(string sourceFolder, string destFolder)
+        {
+            if (!Directory.Exists(destFolder))
+                Directory.CreateDirectory(destFolder);
+            string[] files = Directory.GetFiles(sourceFolder);
+            foreach (string file in files)
+            {
+                string name = Path.GetFileName(file);
+                string dest = Path.Combine(destFolder, name);
+                File.Copy(file, dest);
+            }
+            string[] folders = Directory.GetDirectories(sourceFolder);
+            foreach (string folder in folders)
+            {
+                string name = Path.GetFileName(folder);
+                string dest = Path.Combine(destFolder, name);
+                CopyDir(folder, dest);
+            }
         }
 
         //Open the file browser
@@ -291,12 +313,20 @@ namespace MameBoxRomManager
                     {
                         File.Copy(fullsetDir + "\\" + cg.ZipFile + ".zip", mameboxDir + "\\" + cg.ZipFile + ".zip", true);
                     }
+                    if (!Directory.Exists(mameboxDir + "\\" + cg.ZipFile) || fullSync)
+                    {
+                        CopyDir(fullsetDir + "\\" + cg.ZipFile+"\\", mameboxDir + "\\" + cg.ZipFile+"\\");
+                    }
                 }
                 else
                 {
                     if (File.Exists(mameboxDir + "\\" + cg.ZipFile + ".zip"))
                     {
                         File.Delete(mameboxDir + "\\" + cg.ZipFile + ".zip");
+                    }
+                    if(Directory.Exists(mameboxDir + "\\" + cg.ZipFile))
+                    {
+                        Directory.Delete(mameboxDir + "\\" + cg.ZipFile);
                     }
                 }
                 this.Dispatcher.Invoke(() => {

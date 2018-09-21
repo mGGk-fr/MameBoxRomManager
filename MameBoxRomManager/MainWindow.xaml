@@ -48,7 +48,7 @@
             </TabItem>
             <TabItem Header="About" >
                 <Grid>
-                    <Label Content="Code by mGGk - 2k17 - Version 1.0" HorizontalAlignment="Left" Margin="0,495,0,0" VerticalAlignment="Top" Height="32"/>
+                    <Label Content="Code by mGGk - 2k18 - Version 1.1" HorizontalAlignment="Left" Margin="0,495,0,0" VerticalAlignment="Top" Height="32"/>
                 </Grid>
             </TabItem>
         </TabControl>
